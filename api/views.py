@@ -8,7 +8,7 @@ import requests
 # Create your views here.
 
 ip_address_url = 'https://get.geojs.io/v1/ip.json'
-ip_to_city_url = "https://ipinfo.io/{}?90f3621536000b"
+ip_to_city_url = 'https://freeipapi.com/api/json/{}'
 weather_key = "f8505e1d5282111e5bd07d586c595083"
 weather_url = 'https://api.openweathermap.org/data/2.5/weather'
 
@@ -22,7 +22,7 @@ class HelloView(View):
         data1 = requests.get(ip_to_city_url.format(client_ip))
         response1 = data1.json()
         print(response1)
-        city = response1['city']
+        city = response1['cityName']
         parameter = {
             'q':city,
             'appid': weather_key
@@ -33,9 +33,7 @@ class HelloView(View):
         temp = temp_in_f - 273.15
         greeting = f"Hello, {name}!, the temperature is {temp:.2f} degrees celsius in {city}"
         return JsonResponse({
-            'client_ip': client_ip, 
+            'client_ip': client_ip,
             'location': city,
             'greeting': greeting,
         })
-     
-      
