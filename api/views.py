@@ -8,21 +8,31 @@ import requests
 # Create your views here.
 
 ip_address_url = 'https://get.geojs.io/v1/ip.json'
-ip_to_city_url = 'https://freeipapi.com/api/json/{}'
+ip_to_city_url = 'https://geo.ipify.org/api/v2/country?apiKey=at_2EUiHGRHgd1H2TbDTK0HB8AX5sKCU&ipAddress={}'
 weather_key = "f8505e1d5282111e5bd07d586c595083"
 weather_url = 'https://api.openweathermap.org/data/2.5/weather'
 
 class HelloView(View):
+    def get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_address = x_forwarded_for.split(',')[0]
+        else:
+            ip_address = request.META.get('REMOTE_ADDR')
+        return ip_address
+
+
     @method_decorator(require_GET)
     def get(self, request):
         name = request.GET.get('visitor_name', 'Guest')
-        data = requests.get(url=ip_address_url)
-        response = data.json()
-        client_ip = response['ip']
+        # data = requests.get(url=ip_address_url)
+        # response = data.json()
+        # client_ip = response['ip']
+        client_ip  = self.get_client_ip(request)
         data1 = requests.get(ip_to_city_url.format(client_ip))
         response1 = data1.json()
         print(response1)
-        city = response1['cityName']
+        city = response1['location']['region']
         parameter = {
             'q':city,
             'appid': weather_key
