@@ -25,13 +25,13 @@ class HelloView(View):
     @method_decorator(require_GET)
     def get(self, request):
         name = request.GET.get('visitor_name', 'Guest')
-        # data = requests.get(url=ip_address_url)
-        # response = data.json()
-        # client_ip = response['ip']
         client_ip  = self.get_client_ip(request)
+        if client_ip == "127.0.0.1":
+            data = requests.get(url=ip_address_url)
+            response = data.json()
+            client_ip = response['ip']
         data1 = requests.get(ip_to_city_url.format(client_ip))
         response1 = data1.json()
-        print(response1)
         city = response1['location']['region']
         parameter = {
             'q':city,
